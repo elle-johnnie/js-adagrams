@@ -31,6 +31,8 @@
     "regenerator-runtime": "^0.12.1"
   },
   "dependencies": {
+    "lodash": "^4.17.11",
+    "underscore": "^1.9.1",
     "vorpal": "^1.12.0"
   }
 }
