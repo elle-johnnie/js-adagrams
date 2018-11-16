@@ -42,7 +42,7 @@ const scoreLetters = {
 // Q, Z	10
 
 const Adagrams = {
-  drawLetters() {
+  drawLetters(){
         let lettersInhHand = _.sampleSize(letterBag, 10);
         console.log(lettersInhHand);
       return lettersInhHand
@@ -69,9 +69,9 @@ const Adagrams = {
 
     },
      scoreWord(word){
+      console.log(word);
       let score = 0;
-      let wordArray;
-      wordArray = word.toUpperCase().split('');
+      let wordArray = word.toUpperCase().split('');
       for(let char of wordArray){
           // console.log(`Char ${char} has a score of ${scoreLetters[char]}`);
           score += scoreLetters[char];
@@ -83,22 +83,26 @@ const Adagrams = {
         return score
     },
     highestScoreFrom(words){
-      let scoresArray = [];
+
+      // let scoresArray = [];
       const scoreHash = {};
-      words.forEach(function(word){
-          scoreHash[word] = scoreWord(word);
-          scoresArray.push(scoreHash[word]);
-      });
-      console.log(scoreHash);
-      console.log(scoresArray);
+      for (let word of words) {
+          // scoreHash["word"] = word;
+          scoreHash[word] = this.scoreWord(word);
+          // scoresArray.push(scoreHash);
+      }
+
+        console.log(`words: ${words}`);
+        console.log(scoreHash);
+        // console.log(scoresArray);
       // find max
-        const getMax = scoreHash => {
-            return Object.keys(scoreHash).filter(score => {
-                return scoreHash[score] == Math.max.apply(null,
-                    Object.values(scoreHash));
+        const getMax = (object) => {
+            return Object.keys(object).filter(x => {
+                return object[x] === Math.max.apply(null,
+                Object.values(object));
             });
         };
-        console.log(getMax);
+        console.log(`scores array: ${getMax(scoreHash)}`);
       if(getMax.length > 1){
           getMax.sort(function(a, b){
               // ASC  -> a.length - b.length
@@ -107,7 +111,11 @@ const Adagrams = {
           });
       }
       const winWord = getMax[0];
-      return winWord
+
+      let winner = {};
+      winner["score"] = this.scoreWord(winWord);
+      winner["word"] = winWord;
+      return winner
       }
 
     };
