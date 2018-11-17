@@ -82,18 +82,25 @@ const Adagrams = {
       // console.log(score);
         return score
     },
+
     highestScoreFrom(words){
-
-      // let scoresArray = [];
-      const scoreHash = {};
+      let scoresArray = [];
+      let scoreHash = {};
       for (let word of words) {
-          // scoreHash["word"] = word;
-          scoreHash[word] = this.scoreWord(word);
-          // scoresArray.push(scoreHash);
-      }
+            console.log(word);
+          let tempHash = {
+              word: word,
+              score: this.scoreWord(word)
+          // scoreHash["score"] = this.scoreWord(word);
 
-        console.log(`words: ${words}`);
-        console.log(scoreHash);
+      };
+          scoresArray.push(tempHash);
+          console.log('temphash at this point: ' + `${tempHash}`)
+          console.log('temphash at this point keys: ' + `${Object.keys(tempHash)}`)
+          console.log('scorearray first at this point with temphash key: ' + `${scoresArray[0][tempHash.word]}`)
+      }
+        // console.log(`words: ${words}`);
+        console.log('scoreHash: '  + `${Object.keys(scoreHash)}`);
         // console.log(scoresArray);
       // find max
         const getMax = (object) => {
@@ -102,7 +109,7 @@ const Adagrams = {
                 Object.values(object));
             });
         };
-        console.log(`scores array: ${getMax(scoreHash)}`);
+        // console.log(`scores array: ${getMax(scoreHash)}`);
       if(getMax.length > 1){
           getMax.sort(function(a, b){
               // ASC  -> a.length - b.length
@@ -111,9 +118,9 @@ const Adagrams = {
           });
       }
       const winWord = getMax[0];
-
+        console.log(winWord);
       let winner = {};
-      winner["score"] = this.scoreWord(winWord);
+      winner["score"] = this.scoreWord(getMax[0]);
       winner["word"] = winWord;
       return winner
       }
