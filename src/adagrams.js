@@ -70,7 +70,7 @@ const Adagrams = {
     },
      scoreWord(word){
       let score = 0;
-      let wordArray;
+      let wordArray = [];
       wordArray = word.toUpperCase().split('');
       for(let char of wordArray){
           // console.log(`Char ${char} has a score of ${scoreLetters[char]}`);
@@ -84,22 +84,22 @@ const Adagrams = {
     },
     highestScoreFrom(words){
       let scoresArray = [];
-      const scoreHash = {};
+      let scoreHash = {};
       words.forEach(function(word){
-          scoreHash[word] = scoreWord(word);
+          scoreHash[word] = this.scoreWord(word);
           scoresArray.push(scoreHash[word]);
       });
       console.log(scoreHash);
       console.log(scoresArray);
       // find max
-        const getMax = scoreHash => {
-            return Object.keys(scoreHash).filter(score => {
-                return scoreHash[score] == Math.max.apply(null,
-                    Object.values(scoreHash));
+        const getMax = object => {
+            return Object.keys(object).filter(x => {
+                return object[x] == Math.max.apply(null,
+                    Object.values(object));
             });
         };
         console.log(getMax);
-      if(getMax.length > 1){
+      if(scoreHash.getMax().length > 1){
           getMax.sort(function(a, b){
               // ASC  -> a.length - b.length
               // DESC -> b.length - a.length
