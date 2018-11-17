@@ -42,19 +42,28 @@ const scoreLetters = {
 // Q, Z	10
 
 const Adagrams = {
+    // use lodash to get a sample of 10 letters from the letterbag
   drawLetters(){
         let lettersInhHand = _.sampleSize(letterBag, 10);
         console.log(lettersInhHand);
       return lettersInhHand
   },
+    // ensure that only lettersInHand valid inputs
+    // create an hash object that sums each letterInHand
+    // k:letter, v:letter count
     usesAvailableLetters(input, lettersInHand) {
+
         let count = lettersInHand.reduce( (tally, letter) => {
+            // ????? I don't know exactly how this next line works but it does :| ?????????
             tally[letter] = (tally[letter] || 0) + 1 ;
             return tally;
         } , {});
-        console.log(count);
-
+        console.log(`hash object of tallied available letters in hand: ${count}`);
+        // split letters into an array
         const checkLetters = input.split('');
+        // loop through checkLetters array
+        // decrement count for each letter used
+        // return false if a letter is overused or not in checkLetters hash
         for(let letter of checkLetters){
             // console.log(letter);
             // console.log(count[letter]);
@@ -64,12 +73,13 @@ const Adagrams = {
                 return false;
             }
         }
-        console.log(count);
+        // console.log(count);
         return true
 
     },
+    // score each word according to value in score object(hash)
      scoreWord(word){
-      console.log(word);
+      // console.log(word);
       let score = 0;
       let wordArray = word.toUpperCase().split('');
       for(let char of wordArray){
@@ -79,54 +89,62 @@ const Adagrams = {
       if (wordArray.length >= 7){
           score += 8;
       }
-      // console.log(score);
         return score
     },
 
-    highestScoreFrom(words){
-      let scoresArray = [];
-      let scoreHash = {};
-      for (let word of words) {
-            console.log(word);
-          let tempHash = {
-              word: word,
-              score: this.scoreWord(word)
-          // scoreHash["score"] = this.scoreWord(word);
+    highestScoreFrom: function (words) {
+        // create a hash-object of k:word and v:scores for each word
+        let scoreHash = {};
+        for (let word of words) {
+            scoreHash[`${word}`] = this.scoreWord(word);
+        }
 
-      };
-          scoresArray.push(tempHash);
-          console.log('temphash at this point: ' + `${tempHash}`)
-          console.log('temphash at this point keys: ' + `${Object.keys(tempHash)}`)
-          console.log('scorearray first at this point with temphash key: ' + `${scoresArray[0][tempHash.word]}`)
-      }
-        // console.log(`words: ${words}`);
-        console.log('scoreHash: '  + `${Object.keys(scoreHash)}`);
-        // console.log(scoresArray);
-      // find max
-        const getMax = (object) => {
-            return Object.keys(object).filter(x => {
+        // console.log( 'scoreHash: ' + `${Object.entries(scoreHash)}` );
+
+        // find max function
+        const getMax = ( object) => {
+            return Object.keys( object ).filter(x => {
                 return object[x] === Math.max.apply(null,
-                Object.values(object));
+                    Object.values( object ) );
             });
         };
-        // console.log(`scores array: ${getMax(scoreHash)}`);
-      if(getMax.length > 1){
-          getMax.sort(function(a, b){
-              // ASC  -> a.length - b.length
-              // DESC -> b.length - a.length
-              return a.length - b.length;
-          });
-      }
-      const winWord = getMax[0];
-        console.log(winWord);
-      let winner = {};
-      winner["score"] = this.scoreWord(getMax[0]);
-      winner["word"] = winWord;
-      return winner
-      }
+        // call getMax on scoreHash to get array of max scores returned
+        let max = getMax( scoreHash );
+        // console.log( `max score array: ${max}` );
+        // console.log( `max score array length: ${max.length}` );
+        if ( max.length > 1 ) {
+            max.sort( function ( a, b ) {
+                // ASC  -> a.length - b.length
+                // DESC -> b.length - a.length
+                return a.length - b.length;
+            });
+        }
 
-    };
+        // check for 10 character winners
+        let temp = [];
+        for ( let w of max ){
+            if ( w.length === 10 ){
+                temp.push(w);
+            }
+        }
+        // if > 1 word uses all 10 char, pick 1st in order
+        if(temp.length >= 1){
+            max[0] = temp[0];
+        }
+
+        const winner = {
+            score: this.scoreWord( max[0] ),
+            word: max[0]
+        };
+        // winner["score"] = this.scoreWord(max[0]);
+        // winner["word"] = winWord;
+        return winner
+    }
+
+};
 
 
 // Do not remove this line or your tests will break!
 export default Adagrams;
+/// let g = Adagrams.highestScoreFrom(['x', 'xx', 'xxx', 'aaa']);
+// // console.log(g);
