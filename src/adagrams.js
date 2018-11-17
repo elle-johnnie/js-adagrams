@@ -42,76 +42,112 @@ const scoreLetters = {
 // Q, Z	10
 
 const Adagrams = {
-  drawLetters() {
+    // use lodash to get a sample of 10 letters from the letterbag
+    drawLetters() {
         let lettersInhHand = _.sampleSize(letterBag, 10);
         console.log(lettersInhHand);
-      return lettersInhHand
-  },
+        return lettersInhHand
+    },
+    // ensure that only lettersInHand valid inputs
+    // create an hash object that sums each letterInHand
+    // k:letter, v:letter count
     usesAvailableLetters(input, lettersInHand) {
-        let count = lettersInHand.reduce( (tally, letter) => {
-            tally[letter] = (tally[letter] || 0) + 1 ;
-            return tally;
-        } , {});
-        console.log(count);
 
+        let count = lettersInHand.reduce((tally, letter) => {
+            // ????? I don't know exactly how this next line works but it does :| ?????????
+            tally[letter] = (tally[letter] || 0) + 1;
+            return tally;
+        }, {});
+        // I learned that using string interpolation requires interpolating specifics
+        // or else js just prints 'object' to the console
+        console.log(`hash object of tallied available letters in hand: ${Object.entries(count)}`);
+        // logging without string interp. gives me what i want tho
+        console.log(count);
+        // split letters into an array
         const checkLetters = input.split('');
-        for(let letter of checkLetters){
+        // loop through checkLetters array
+        // decrement count for each letter used
+        // return false if a letter is overused or not in checkLetters hash
+        for (let letter of checkLetters) {
             // console.log(letter);
             // console.log(count[letter]);
-            if (letter in count && count[letter] >= 1){
+            if (letter in count && count[letter] >= 1) {
                 count[letter] -= 1
             } else {
                 return false;
             }
         }
-        console.log(count);
+        // console.log(count);
         return true
 
     },
-     scoreWord(word){
-      let score = 0;
-      let wordArray = [];
-      wordArray = word.toUpperCase().split('');
-      for(let char of wordArray){
-          // console.log(`Char ${char} has a score of ${scoreLetters[char]}`);
-          score += scoreLetters[char];
-      }
-      if (wordArray.length >= 7){
-          score += 8;
-      }
-      // console.log(score);
+    // score each word according to value in score object(hash)
+    scoreWord(word) {
+        // console.log(word);
+        let score = 0;
+        let wordArray = word.toUpperCase().split('');
+        for (let char of wordArray) {
+            // console.log(`Char ${char} has a score of ${scoreLetters[char]}`);
+            score += scoreLetters[char];
+        }
+        if (wordArray.length >= 7) {
+            score += 8;
+        }
         return score
     },
-    highestScoreFrom(words){
-      let scoresArray = [];
-      let scoreHash = {};
-      words.forEach(function(word){
-          scoreHash[word] = this.scoreWord(word);
-          scoresArray.push(scoreHash[word]);
-      });
-      console.log(scoreHash);
-      console.log(scoresArray);
-      // find max
-        const getMax = object => {
+
+    highestScoreFrom(words) {
+        // create a hash-object of k:word and v:scores for each word
+        let scoreHash = {};
+        for (let word of words) {
+            scoreHash[`${word}`] = this.scoreWord(word);
+        }
+
+        // console.log( 'scoreHash: ' + `${Object.entries(scoreHash)}` );
+
+        // find max function
+        const getMax = (object) => {
             return Object.keys(object).filter(x => {
-                return object[x] == Math.max.apply(null,
+                return object[x] === Math.max.apply(null,
                     Object.values(object));
             });
         };
-        console.log(getMax);
-      if(scoreHash.getMax().length > 1){
-          getMax.sort(function(a, b){
-              // ASC  -> a.length - b.length
-              // DESC -> b.length - a.length
-              return a.length - b.length;
-          });
-      }
-      const winWord = getMax[0];
-      return winWord
-      }
+        // call getMax on scoreHash to get array of max scores returned
+        let max = getMax(scoreHash);
+        // console.log( `max score array: ${max}` );
+        // console.log( `max score array length: ${max.length}` );
+        if (max.length > 1) {
+            max.sort(function (a, b) {
+                // ASC  -> a.length - b.length
+                // DESC -> b.length - a.length
+                return a.length - b.length;
+            });
+        }
 
-    };
+        // check for 10 character winners
+        let temp = [];
+        for (let w of max) {
+            if (w.length === 10) {
+                temp.push(w);
+            }
+        }
+        // if > 1 word uses all 10 char, pick 1st in order
+        if (temp.length >= 1) {
+            max[0] = temp[0];
+        }
+        //???????? why is my IDE telling me that the variable winner is redundant????????
+        const winner = {
+            score: this.scoreWord(max[0]),
+            word: max[0],
+        };
+        // winner["score"] = this.scoreWord(max[0]);
+        // winner["word"] = winWord;
+        return winner
+    }
+};
 
 
 // Do not remove this line or your tests will break!
 export default Adagrams;
+/// let g = Adagrams.highestScoreFrom(['x', 'xx', 'xxx', 'aaa']);
+// // console.log(g);
